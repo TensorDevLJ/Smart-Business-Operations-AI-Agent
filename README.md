@@ -201,9 +201,7 @@ streamlit run dashboard/app.py
 
 ---
 
-## 🎤 Interview Explanation
-
-**"Tell me about this project"**
+**About this project**
 
 > "I built a production-grade AI automation system called Smart Business Operations AI Agent. The system accepts natural language business queries — like 'predict next quarter revenue' or 'detect anomalies in March sales' — and routes them through a LangChain agent that decides which tools to call. The agent can query a structured database, call trained scikit-learn models for forecasting and anomaly detection, or retrieve context from business documents using RAG with FAISS. The LLM backbone is Mistral running locally via Ollama — completely free, no API costs. Everything is exposed through a FastAPI backend with clean REST endpoints, and visualized on a Streamlit dashboard. I designed it with model persistence, conversation memory, automated alerting, and a clean modular architecture that can scale to PostgreSQL and cloud deployment."
 
