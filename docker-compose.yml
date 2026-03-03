@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+  # PostgreSQL (production database)
+  postgres:
+    image: postgres:16-alpine
+    container_name: smart_business_postgres
+    environment:
+      POSTGRES_DB: smart_business
+      POSTGRES_USER: smartuser
+      POSTGRES_PASSWORD: smartpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartuser -d smart_business"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: smart_business_backend
+    environment:
+      DATABASE_URL: postgresql://smartuser:smartpass@postgres:5432/smart_business
+      OLLAMA_BASE_URL: http://ollama:11434
+      DEBUG: "false"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml_models:/app/ml_models
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn backend.api.main:app --host 0.0.0.0 --port 8000
+
+  # Streamlit Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: smart_business_dashboard
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+
+  # Ollama (Local LLM)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: smart_business_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # GPU support (uncomment if available):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  postgres_data:
+  ollama_data:

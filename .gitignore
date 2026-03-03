@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+pip-debug.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ML Models (don't commit trained models)
+ml_models/trained/*.pkl
+ml_models/faiss_index/
+
+# Environment
+.env
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
